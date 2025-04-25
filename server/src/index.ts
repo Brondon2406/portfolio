@@ -9,11 +9,8 @@ import { errorHandler } from './middleware/errorMiddleware';
 import { notFoundHandler } from './middleware/notFoundMiddleware';
 import { config } from './config';
 
-// Initialisation
 const app = express();
-
-// Correction pour __dirname
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __dirname = path.resolve();
 
 // Configuration
 app.set('trust proxy', 1);
