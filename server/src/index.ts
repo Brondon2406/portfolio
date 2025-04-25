@@ -1,23 +1,16 @@
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
 
-// Configuration ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Chemin de base pour les fichiers statiques (adapté pour Render)
-const staticBasePath = path.join(__dirname, '../../dist');
+// Configuration CommonJS
+const __dirname = path.resolve();
 
 // Chargement des variables d'environnement
-import dotenv from 'dotenv';
-dotenv.config();
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,23 +30,26 @@ const staticOptions = {
   redirect: false
 };
 
-// Serve static files - Chemins corrigés pour Render
-app.use(express.static(path.join(staticBasePath, 'client'), staticOptions));
-app.use('/admin', express.static(path.join(staticBasePath, 'admin'), staticOptions));
+// Chemins absolus pour Render
+const clientPath = path.join(__dirname, '../client');
+const adminPath = path.join(__dirname, '../admin');
+
+app.use(express.static(clientPath, staticOptions));
+app.use('/admin', express.static(adminPath, staticOptions));
 
 // Chemin des données
-const dataPath = path.join(__dirname, '../../data/profileData.json');
+const dataPath = path.join(__dirname, '../data/profileData.json');
 
 // Middleware d'authentification
-const authenticateJWT = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const authenticateJWT = (req, res, next) => {
     const authHeader = req.headers.authorization;
     
     if (authHeader) {
         const token = authHeader.split(' ')[1];
         
-        jwt.verify(token, process.env.JWT_SECRET!, (err: any, user: any) => {
+        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
             if (err) return res.sendStatus(403);
-            (req as any).user = user;
+            req.user = user;
             next();
         });
     } else {
@@ -75,8 +71,8 @@ app.get('/api/profile', (req, res) => {
 app.post('/api/admin/login', async (req, res) => {
     const { username, password } = req.body;
     
-    if (username === process.env.ADMIN_USERNAME && await bcrypt.compare(password, process.env.ADMIN_PASSWORD!)) {
-        const token = jwt.sign({ username }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+    if (username === process.env.ADMIN_USERNAME && await bcrypt.compare(password, process.env.ADMIN_PASSWORD)) {
+        const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
         return res.json({ token });
     }
     res.status(401).json({ error: 'Invalid credentials' });
@@ -157,35 +153,35 @@ app.delete('/api/skills/:index', authenticateJWT, (req, res) => {
     }
 });
 
-// Routes client - Chemins corrigés
+// Routes client
 app.get(['/', '/about', '/projects', '/skills', '/contact'], (req, res) => {
-    res.sendFile(path.join(staticBasePath, 'client', 'index.html'));
+    res.sendFile(path.join(clientPath, 'index.html'));
 });
 
-// Route admin - Chemin corrigé
+// Route admin
 app.get('/admin*', (req, res) => {
-    res.sendFile(path.join(staticBasePath, 'admin', 'index.html'));
+    res.sendFile(path.join(adminPath, 'index.html'));
 });
 
 // Gestion des erreurs 404
 app.use((req, res) => {
-    res.status(404).sendFile(path.join(staticBasePath, 'client', 'index.html'));
+    res.status(404).sendFile(path.join(clientPath, 'index.html'));
 });
 
 // Gestion des erreurs 500
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err, req, res, next) => {
     console.error('Server error:', err);
     res.status(500).json({ error: 'Internal server error' });
 });
 
-// Démarrage du serveur
+// Démarrer le serveur
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     
     // Avertissement pour le mot de passe admin
     if (process.env.ADMIN_PASSWORD && !process.env.ADMIN_PASSWORD.startsWith('$2a$')) {
         const hashed = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
-        console.warn('\n⚠️  ADMIN_PASSWORD should be hashed in production:');
+        console.warn('\n⚠️ ADMIN_PASSWORD should be hashed in production:');
         console.warn(`ADMIN_PASSWORD=${hashed}\n`);
     }
 });
