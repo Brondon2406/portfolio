@@ -21,7 +21,7 @@ mkdir -p $DIST_DIR/admin
 cp -r $CLIENT_DIR/* $DIST_DIR/client/
 cp -r $ADMIN_DIR/* $DIST_DIR/admin/
 
-# Vérification
+# Vérification alternative (sans tree)
 echo "✅ Build completed!"
 echo "Structure créée :"
-tree -L 3 $DIST_DIR
+find $DIST_DIR -maxdepth 3 -type d -not -path '*/.*' | sed 's|[^/]*/|   |g'
