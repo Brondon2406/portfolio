@@ -9,17 +9,15 @@ import { errorHandler } from './middleware/errorMiddleware';
 import { notFoundHandler } from './middleware/notFoundMiddleware';
 import { config } from './config';
 
-// Ajoutez cette ligne juste après la création de l'app Express
+// Initialisation
 const app = express();
-
-// Configuration du proxy pour Render
-app.set('trust proxy', 1); // Trust first proxy
+const __dirname = path.resolve();
 
 // Configuration
-const PORT = config.port || 3000;
+app.set('trust proxy', 1); // Nécessaire pour Render
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 100 // Limite chaque IP à 100 requêtes
 });
 
 // Middleware
@@ -29,18 +27,22 @@ app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static files
-app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
+// Fichiers statiques
+app.use(express.static(path.join(__dirname, '../client/public'))); // Client public
+app.use('/admin', express.static(path.join(__dirname, '../admin/public'))); // Interface admin
+app.use('/assets', express.static(path.join(__dirname, '../public/assets'))); // Assets partagés
 
-// Routes
+// Routes API
 app.use('/api/profile', profileRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Error handling
+// Gestion des erreurs
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Démarrage
+app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`);
+  console.log(`Client: http://localhost:${config.port}`);
+  console.log(`Admin: http://localhost:${config.port}/admin`);
 });
