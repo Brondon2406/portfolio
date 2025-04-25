@@ -3,13 +3,11 @@
 # Configuration
 SERVER_DIR="server"
 DIST_DIR="$SERVER_DIR/dist"
-CLIENT_SRC="client/public"
-ADMIN_SRC="admin/public"
 
-# 1. Installer les dépendances
+# 1. Installer les dépendances avec les dépendances de développement
 echo "🔨 Installation des dépendances..."
 cd $SERVER_DIR
-npm install
+npm install --include=dev  # Important pour les @types
 if [ $? -ne 0 ]; then
   echo "❌ Échec de l'installation des dépendances"
   exit 1
@@ -22,19 +20,10 @@ if [ $? -ne 0 ]; then
   echo "❌ Échec de la compilation TypeScript"
   exit 1
 fi
-cd ..
 
-# 3. Copier les fichiers statiques
-echo "📂 Copie des fichiers statiques..."
-mkdir -p $DIST_DIR/client
-mkdir -p $DIST_DIR/admin
-
-cp -r $CLIENT_SRC/* $DIST_DIR/client/
-cp -r $ADMIN_SRC/* $DIST_DIR/admin/
-
-# 4. Vérification finale
-echo "✅ Build terminé avec succès!"
-echo "📁 Structure générée:"
-find $DIST_DIR -maxdepth 3 -type d | sed 's|[^/]*/|   |g'
+# 3. Vérification finale
+echo "✅ Build serveur terminé avec succès!"
+echo "📁 Contenu du dossier dist:"
+ls -lh $DIST_DIR
 
 exit 0
