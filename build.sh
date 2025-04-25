@@ -2,39 +2,39 @@
 
 # Configuration
 SERVER_DIR="server"
-DIST_DIR="server/dist"
+DIST_DIR="$SERVER_DIR/dist"
 CLIENT_SRC="client/public"
 ADMIN_SRC="admin/public"
 
-# Installation des dépendances
-echo "🔨 Installing server dependencies..."
+# 1. Installer les dépendances
+echo "🔨 Installation des dépendances..."
 cd $SERVER_DIR
 npm install
 if [ $? -ne 0 ]; then
-    echo "❌ Failed to install dependencies"
-    exit 1
+  echo "❌ Échec de l'installation des dépendances"
+  exit 1
 fi
 
-# Compilation TypeScript
-echo "⚙️ Compiling TypeScript..."
+# 2. Compiler TypeScript
+echo "⚙️ Compilation TypeScript..."
 npm run build
 if [ $? -ne 0 ]; then
-    echo "❌ TypeScript compilation failed"
-    exit 1
+  echo "❌ Échec de la compilation TypeScript"
+  exit 1
 fi
 cd ..
 
-# Copie des fichiers statiques
-echo "📦 Copying static files..."
+# 3. Copier les fichiers statiques
+echo "📂 Copie des fichiers statiques..."
 mkdir -p $DIST_DIR/client
 mkdir -p $DIST_DIR/admin
 
-[ -d "$CLIENT_SRC" ] && cp -r $CLIENT_SRC/* $DIST_DIR/client/
-[ -d "$ADMIN_SRC" ] && cp -r $ADMIN_SRC/* $DIST_DIR/admin/
+cp -r $CLIENT_SRC/* $DIST_DIR/client/
+cp -r $ADMIN_SRC/* $DIST_DIR/admin/
 
-# Vérification
-echo "✅ Build completed successfully!"
-echo "📁 Final structure:"
-tree -L 3 $DIST_DIR || find $DIST_DIR -maxdepth 3 -type d | sed 's|[^/]*/|   |g'
+# 4. Vérification finale
+echo "✅ Build terminé avec succès!"
+echo "📁 Structure générée:"
+find $DIST_DIR -maxdepth 3 -type d | sed 's|[^/]*/|   |g'
 
 exit 0
