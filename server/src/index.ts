@@ -12,6 +12,9 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Chemin de base pour les fichiers statiques (adapté pour Render)
+const staticBasePath = path.join(__dirname, '../../dist');
+
 // Chargement des variables d'environnement
 import dotenv from 'dotenv';
 dotenv.config();
@@ -34,9 +37,9 @@ const staticOptions = {
   redirect: false
 };
 
-// Serve static files
-app.use(express.static(path.join(__dirname, '../client'), staticOptions));
-app.use('/admin', express.static(path.join(__dirname, '../admin'), staticOptions));
+// Serve static files - Chemins corrigés pour Render
+app.use(express.static(path.join(staticBasePath, 'client'), staticOptions));
+app.use('/admin', express.static(path.join(staticBasePath, 'admin'), staticOptions));
 
 // Chemin des données
 const dataPath = path.join(__dirname, '../../data/profileData.json');
@@ -122,21 +125,54 @@ app.delete('/api/projects/:index', authenticateJWT, (req, res) => {
     }
 });
 
-// Routes client
+// Gestion des compétences
+app.post('/api/skills', authenticateJWT, (req, res) => {
+    try {
+        const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        data.skills = data.skills || [];
+        data.skills.push(req.body);
+        fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+        res.json({ message: 'Skill added', skills: data.skills });
+    } catch (error) {
+        console.error('Add skill error:', error);
+        res.status(500).json({ error: 'Failed to add skill' });
+    }
+});
+
+app.delete('/api/skills/:index', authenticateJWT, (req, res) => {
+    try {
+        const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+        const index = parseInt(req.params.index);
+        
+        if (!data.skills || index < 0 || index >= data.skills.length) {
+            return res.status(404).json({ error: 'Skill not found' });
+        }
+        
+        data.skills.splice(index, 1);
+        fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+        res.json({ message: 'Skill deleted', skills: data.skills });
+    } catch (error) {
+        console.error('Delete skill error:', error);
+        res.status(500).json({ error: 'Failed to delete skill' });
+    }
+});
+
+// Routes client - Chemins corrigés
 app.get(['/', '/about', '/projects', '/skills', '/contact'], (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/index.html'));
+    res.sendFile(path.join(staticBasePath, 'client', 'index.html'));
 });
 
-// Route admin
+// Route admin - Chemin corrigé
 app.get('/admin*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../admin/index.html'));
+    res.sendFile(path.join(staticBasePath, 'admin', 'index.html'));
 });
 
-// Gestion des erreurs
+// Gestion des erreurs 404
 app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, '../client/index.html'));
+    res.status(404).sendFile(path.join(staticBasePath, 'client', 'index.html'));
 });
 
+// Gestion des erreurs 500
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error('Server error:', err);
     res.status(500).json({ error: 'Internal server error' });
@@ -144,10 +180,12 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Démarrage du serveur
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
     
+    // Avertissement pour le mot de passe admin
     if (process.env.ADMIN_PASSWORD && !process.env.ADMIN_PASSWORD.startsWith('$2a$')) {
         const hashed = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
-        console.warn('\n⚠️  Update ADMIN_PASSWORD in .env to:', hashed, '\n');
+        console.warn('\n⚠️  ADMIN_PASSWORD should be hashed in production:');
+        console.warn(`ADMIN_PASSWORD=${hashed}\n`);
     }
 });

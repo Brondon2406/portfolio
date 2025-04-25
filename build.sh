@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # Configuration
-CLIENT_DIR="client/public"
-ADMIN_DIR="admin/public"
+CLIENT_SRC="client/public"
+ADMIN_SRC="admin/public"
 SERVER_DIR="server"
 DIST_DIR="server/dist"
+CLIENT_DIST="$DIST_DIR/client"
+ADMIN_DIST="$DIST_DIR/admin"
 
 # Build du serveur
 echo "🔨 Building server..."
@@ -15,16 +17,14 @@ cd ..
 
 # Copie des fichiers statiques
 echo "📂 Copying static files..."
-mkdir -p $DIST_DIR/client
-mkdir -p $DIST_DIR/admin
+mkdir -p $CLIENT_DIST
+mkdir -p $ADMIN_DIST
 
-cp -r $CLIENT_DIR/* $DIST_DIR/client/
-cp -r $ADMIN_DIR/* $DIST_DIR/admin/
+# Copie récursive en conservant les permissions
+cp -rf $CLIENT_SRC/. $CLIENT_DIST/
+cp -rf $ADMIN_SRC/. $ADMIN_DIST/
 
-# Correction des chemins pour ES Modules
-echo "🛠 Fixing module paths..."
-find $DIST_DIR -type f -name "*.js" -exec sed -i 's/\.js"/"/g' {} \;
-
+# Vérification
 echo "✅ Build completed!"
 echo "Structure créée :"
-find $DIST_DIR -maxdepth 3 -type d | sed 's|[^/]*/|   |g'
+ls -R $DIST_DIR | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
