@@ -11,13 +11,15 @@ import { config } from './config';
 
 // Initialisation
 const app = express();
-const __dirname = path.resolve();
+
+// Correction pour __dirname
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 // Configuration
-app.set('trust proxy', 1); // Nécessaire pour Render
+app.set('trust proxy', 1);
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // Limite chaque IP à 100 requêtes
+  windowMs: 15 * 60 * 1000,
+  max: 100
 });
 
 // Middleware
@@ -28,9 +30,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Fichiers statiques
-app.use(express.static(path.join(__dirname, '../client/public'))); // Client public
-app.use('/admin', express.static(path.join(__dirname, '../admin/public'))); // Interface admin
-app.use('/assets', express.static(path.join(__dirname, '../public/assets'))); // Assets partagés
+app.use(express.static(path.join(__dirname, '../../client/public')));
+app.use('/admin', express.static(path.join(__dirname, '../../admin/public')));
+app.use('/assets', express.static(path.join(__dirname, '../../public/assets')));
 
 // Routes API
 app.use('/api/profile', profileRoutes);
@@ -43,6 +45,4 @@ app.use(errorHandler);
 // Démarrage
 app.listen(config.port, () => {
   console.log(`Server running on port ${config.port}`);
-  console.log(`Client: http://localhost:${config.port}`);
-  console.log(`Admin: http://localhost:${config.port}/admin`);
 });
