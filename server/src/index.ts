@@ -9,7 +9,11 @@ import { errorHandler } from './middleware/errorMiddleware';
 import { notFoundHandler } from './middleware/notFoundMiddleware';
 import { config } from './config';
 
+// Ajoutez cette ligne juste après la création de l'app Express
 const app = express();
+
+// Configuration du proxy pour Render
+app.set('trust proxy', 1); // Trust first proxy
 
 // Configuration
 const PORT = config.port || 3000;
