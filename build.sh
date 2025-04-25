@@ -21,7 +21,10 @@ mkdir -p $DIST_DIR/admin
 cp -r $CLIENT_DIR/* $DIST_DIR/client/
 cp -r $ADMIN_DIR/* $DIST_DIR/admin/
 
-# Vérification alternative (sans tree)
+# Correction des chemins pour ES Modules
+echo "🛠 Fixing module paths..."
+find $DIST_DIR -type f -name "*.js" -exec sed -i 's/\.js"/"/g' {} \;
+
 echo "✅ Build completed!"
 echo "Structure créée :"
-find $DIST_DIR -maxdepth 3 -type d -not -path '*/.*' | sed 's|[^/]*/|   |g'
+find $DIST_DIR -maxdepth 3 -type d | sed 's|[^/]*/|   |g'
