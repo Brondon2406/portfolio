@@ -1,20 +1,11 @@
 import dotenv from 'dotenv';
-import path from 'path';
 
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+dotenv.config();
 
-interface Config {
-    PORT: number;
-    ADMIN_USERNAME: string;
-    ADMIN_PASSWORD: string;
-    JWT_SECRET: string;
-}
-
-const config: Config = {
-    PORT: parseInt(process.env.PORT || '3000'),
-    ADMIN_USERNAME: process.env.ADMIN_USERNAME || 'admin',
-    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'securepassword',
-    JWT_SECRET: process.env.JWT_SECRET || 'your_jwt_secret_here'
+export const config = {
+  port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+  nodeEnv: process.env.NODE_ENV || 'development',
+  adminUsername: process.env.ADMIN_USERNAME || 'admin',
+  adminPassword: process.env.ADMIN_PASSWORD || 'password',
+  jwtSecret: process.env.JWT_SECRET || 'your-secret-key'
 };
-
-export default config;
