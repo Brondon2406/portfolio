@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Portfolio Professionnel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 id="profile-name">Chargement...</h1>
+            <p id="profile-title">Développeur Full Stack</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#about">À propos</a></li>
+                <li><a href="#projects">Projets</a></li>
+                <li><a href="#skills">Compétences</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="about">
+            <h2>À propos de moi</h2>
+            <p id="profile-about">Chargement...</p>
+        </section>
+
+        <section id="projects">
+            <h2>Mes Projets</h2>
+            <div id="projects-container" class="projects-grid">
+                <!-- Les projets seront chargés dynamiquement -->
+            </div>
+        </section>
+
+        <section id="skills">
+            <h2>Mes Compétences</h2>
+            <div id="skills-container" class="skills-list">
+                <!-- Les compétences seront chargées dynamiquement -->
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contactez-moi</h2>
+            <div class="contact-info">
+                <p><i class="fas fa-envelope"></i> <span id="profile-email">Chargement...</span></p>
+                <p><i class="fas fa-phone"></i> <span id="profile-phone">Chargement...</span></p>
+                <p><i class="fas fa-map-marker-alt"></i> <span id="profile-location">Chargement...</span></p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> Mon Portfolio Professionnel. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="../dist/main.js"></script>
+</body>
+</html>

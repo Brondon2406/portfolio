@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="login-form" class="form-container">
+        <h2>Connexion Admin</h2>
+        <form id="login">
+            <input type="text" id="username" placeholder="Nom d'utilisateur" required>
+            <input type="password" id="password" placeholder="Mot de passe" required>
+            <button type="submit">Se connecter</button>
+        </form>
+    </div>
+
+    <div id="admin-dashboard" class="dashboard-container hidden">
+        <header>
+            <h1>Tableau de Bord Admin</h1>
+            <button id="logout-btn">Déconnexion</button>
+        </header>
+        
+        <div class="sections">
+            <section id="profile-section">
+                <h2>Profil</h2>
+                <form id="profile-form">
+                    <!-- Les champs seront remplis dynamiquement -->
+                </form>
+            </section>
+            
+            <section id="projects-section">
+                <h2>Projets</h2>
+                <div id="projects-list"></div>
+                <button id="add-project-btn">Ajouter un Projet</button>
+            </section>
+            
+            <section id="skills-section">
+                <h2>Compétences</h2>
+                <div id="skills-list"></div>
+                <button id="add-skill-btn">Ajouter une Compétence</button>
+            </section>
+        </div>
+    </div>
+
+    <script type="module" src="../dist/admin.js"></script>
+</body>
+</html>

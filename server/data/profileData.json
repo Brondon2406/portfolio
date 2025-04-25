@@ -1,0 +1,38 @@
+{
+  "name": "Votre Nom",
+  "title": "Développeur Full Stack",
+  "about": "Je suis un développeur passionné avec plusieurs années d'expérience dans la création d'applications web modernes.",
+  "email": "contact@example.com",
+  "phone": "+1234567890",
+  "location": "Paris, France",
+  "projects": [
+    {
+      "title": "Site E-commerce",
+      "description": "Une plateforme e-commerce complète avec panier et paiement en ligne.",
+      "link": "https://example.com/ecommerce"
+    },
+    {
+      "title": "Application de Gestion",
+      "description": "Application web pour la gestion des tâches et des projets.",
+      "link": "https://example.com/taskmanager"
+    }
+  ],
+  "skills": [
+    {
+      "name": "JavaScript",
+      "level": 9
+    },
+    {
+      "name": "TypeScript",
+      "level": 8
+    },
+    {
+      "name": "React",
+      "level": 8
+    },
+    {
+      "name": "Node.js",
+      "level": 7
+    }
+  ]
+}
